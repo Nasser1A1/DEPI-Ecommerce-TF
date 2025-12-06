@@ -1,0 +1,9 @@
+s3_bucket_name = "name-bucket"
+s3_bucket_path = "S3/path/terraform.tfstate"
+aws_region = "eu-central-1"
+
+
+ecr_repositories = [
+  "name1-service",
+  "name2-service",
+]
