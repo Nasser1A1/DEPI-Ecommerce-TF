@@ -13,3 +13,9 @@ sudo usermod -aG docker $USER
 newgrp docker
 curl https://get.k3s.io | K3S_TOKEN=DEV sh
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+kubectl create secret docker-registry ecr-secret \
+  --docker-server=274363548467.dkr.ecr.us-east-1.amazonaws.com \
+  --docker-username=AWS \
+  --docker-password=$(aws ecr get-login-password --region us-east-1) \
+  --docker-email=you@example.com \
+  -n default

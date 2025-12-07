@@ -53,6 +53,41 @@ resource "aws_security_group" "ec2_sg" {
   }
 }
 
+
+##############################################
+# IAM Role for ECR Access
+##############################################
+resource "aws_iam_role" "k3s_ecr_role" {
+  name = "k3s-ecr-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+##############################################
+# Attach AmazonEC2ContainerRegistryFullAccess
+##############################################
+resource "aws_iam_role_policy_attachment" "k3s_ecr_policy" {
+  role       = aws_iam_role.k3s_ecr_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+}
+
+##############################################
+# Create Instance Profile
+##############################################
+resource "aws_iam_instance_profile" "k3s_ecr_instance_profile" {
+  name = "k3s-ecr-instance-profile"
+  role = aws_iam_role.k3s_ecr_role.name
+}
+
 ###############################################
 # Create EC2 Instance (K3S compatible)
 ###############################################
@@ -60,18 +95,19 @@ resource "aws_instance" "Dev-Server" {
   ami           = data.aws_ami.ubuntu_2204.id
   instance_type = "c7i-flex.large"
 
-  # Proper network configuration
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
-  # Optional: Create a keypair for SSH
   key_name = "Dev-Keypair"
 
-  # Install Docker automatically
+  iam_instance_profile = aws_iam_instance_profile.k3s_ecr_instance_profile.name
+
+  # Install Docker / Containerd / k3s bootstrap
   user_data = file("scripts/user_data.sh")
 
   tags = {
     Name = "Dev-Server-k3s"
   }
 }
+
 
