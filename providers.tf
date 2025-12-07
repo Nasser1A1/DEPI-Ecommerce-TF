@@ -4,15 +4,14 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    backend "s3" {
-      bucket = var.s3_bucket_name
-      key    = var.s3_bucket_path
-      region = var.aws_region
-    }
-    
+  }
+
+  # Backend configuration does not support variables.
+  # You must hardcode values here or use partial configuration.
+  backend "s3" {
+    bucket = "massapplyapp"
+    key    = "tfState/terraform.tfstate"
+    region = "us-east-1"
   }
 }
 
-provider "aws" {
-  region = var.aws_region
-}

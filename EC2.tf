@@ -58,7 +58,7 @@ resource "aws_security_group" "ec2_sg" {
 ###############################################
 resource "aws_instance" "Dev-Server" {
   ami           = data.aws_ami.ubuntu_2204.id
-  instance_type = "t3.medium" 
+  instance_type = "c7i-flex.large" 
 
   # Optional: Create a keypair for SSH
   key_name = "Dev-Keypair"

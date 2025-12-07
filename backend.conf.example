@@ -1,0 +1,3 @@
+bucket = "name-bucket"
+key    = "S3/path/terraform.tfstate"
+region = "eu-central-1"

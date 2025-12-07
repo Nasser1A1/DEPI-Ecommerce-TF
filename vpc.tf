@@ -15,7 +15,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
-  availability_zone       = "eu-central-1a"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
 
   tags = {
@@ -24,15 +24,28 @@ resource "aws_subnet" "public" {
 }
 
 #########################
-# Private Subnet
+# Private Subnet 1
 #########################
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.2.0/24"
-  availability_zone = "eu-central-1b"
+  availability_zone = "us-east-1b"
 
   tags = {
-    Name = "private-subnet"
+    Name = "private-subnet-1"
+  }
+}
+
+#########################
+# Private Subnet 2 (For RDS/HA)
+#########################
+resource "aws_subnet" "private_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-east-1a"
+
+  tags = {
+    Name = "private-subnet-2"
   }
 }
 
@@ -113,5 +126,10 @@ resource "aws_route_table" "private_rt" {
 
 resource "aws_route_table_association" "private_assoc" {
   subnet_id      = aws_subnet.private.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "private_assoc_2" {
+  subnet_id      = aws_subnet.private_2.id
   route_table_id = aws_route_table.private_rt.id
 }

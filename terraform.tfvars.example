@@ -7,3 +7,5 @@ ecr_repositories = [
   "name1-service",
   "name2-service",
 ]
+
+db_password = "CHANGE_ME_SECURE_PASSWORD"

@@ -1,12 +1,5 @@
-variable "ecr_repos" {
-  type        = list(string)
-  description = "List of ECR repository names to create"
-  default     = [var.ecr_repositories]
-}
-
-
 resource "aws_ecr_repository" "repos" {
-  for_each = toset(var.ecr_repos)
+  for_each = toset(var.ecr_repositories)
 
   name = each.value
 
